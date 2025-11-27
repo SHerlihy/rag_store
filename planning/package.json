@@ -1,0 +1,18 @@
+{
+  "license": "ISC",
+  "author": "",
+  "name": "planning",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "infra_diagrams": "live-server --open=./infrastructure_diagrams .",
+    "compose_diagrams": "cd ./infrastructure_diagrams && ts-node-esm diagramsToMd.ts",
+    "readme_add_diagrams": "cd ./infrastructure_diagrams && node ./diagrams_to_readme.cjs"
+  },
+  "devDependencies": {
+    "@mermaid-js/mermaid-cli": "^10.6.1",
+    "mermaid": "^10.6.1",
+    "live-server": "^1.2.2"
+  }
+}
