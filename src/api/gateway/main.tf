@@ -21,13 +21,15 @@ module "auth_lambda" {
     lambda_exec_role = module.exec_role.role_arn
 }
 
-#module "api" {
-#    source = "./api"
-#    
-#    authorizer_arn = auth_lambda.arn
-#    lambda_exec_role = exec_role.role_arn
-#}
-#
-#output "api_base_path" {
-#    value = api.base_path
-#}
+module "api" {
+    source = "./api"
+    
+    auth_invoke_arn = module.auth_lambda.invoke_arn
+    auth_lambda_arn = module.auth_lambda.lambda_arn
+    auth_lambda_name = module.auth_lambda.lambda_name
+    lambda_exec_role = module.exec_role.role_arn
+}
+
+output "api_path" {
+    value = module.api.api_path
+}

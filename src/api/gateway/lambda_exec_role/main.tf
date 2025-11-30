@@ -31,25 +31,3 @@ resource "aws_iam_role_policy_attachment" "lambda_log" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
-
-data "aws_iam_policy_document" "lambda_exec" {
-    statement {
-        effect = "Allow"
-        actions = [
-            "lambda: InvokeFunction"
-        ]
-        resources = [
-          "arn:aws:lambda:::*"
-        ]
-    }
-}
-
-resource "aws_iam_policy" "lambda_exec" {
-  name = "lambda_exec"
-  policy = data.aws_iam_policy_document.lambda_exec.json
-}
-
-resource "aws_iam_role_policy_attachment" "lambda_exec" {
-  role       = aws_iam_role.lambda_exec.name
-  policy_arn = aws_iam_policy.lambda_exec.arn
-}
