@@ -57,23 +57,6 @@ resource "aws_lambda_permission" "allow_api" {
   source_arn = "${var.execution_arn}/*"
 }
 
-resource "aws_api_gateway_method" "proxy_root" {
-  rest_api_id   = var.rest_api_id
-  resource_id   = var.root_resource_id
-  http_method   = "GET"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "lambda_root" {
-  rest_api_id   = var.rest_api_id
-  resource_id   = var.root_resource_id
-  http_method = "${aws_api_gateway_method.proxy_root.http_method}"
-
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = "${aws_lambda_function.bucket_get.invoke_arn}"
-}
-
 #resource "aws_lambda_permission" "allow_api_gateway" {
 #  statement_id  = "AllowExecutionFromAPIGateway"
 #  action        = "lambda:InvokeFunction"
@@ -106,8 +89,9 @@ resource "aws_api_gateway_integration" "bucket_get" {
   resource_id = var.resource_id
   http_method = aws_api_gateway_method.bucket_get.http_method
 
+  passthrough_behavior = "WHEN_NO_TEMPLATES"
   integration_http_method = "POST"
-  type        = "AWS_PROXY"
+  type        = "AWS"
   uri = aws_lambda_function.bucket_get.invoke_arn
 }
 
@@ -115,36 +99,36 @@ resource "aws_api_gateway_integration" "bucket_get" {
 #https://registry.terraform.io/providers/hashicorp/aws/2.33.0/docs/guides/serverless-with-aws-lambda-and-api-gateway
 ##cors stuff is v2
 ##https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
-#resource "aws_api_gateway_method_response" "bucket_get" {
-#  rest_api_id = var.rest_api_id
-#  resource_id = var.resource_id
-#  http_method = aws_api_gateway_method.bucket_get.http_method
-#  status_code = "200"
-#
-#  #  response_parameters = {
-#  #    "method.response.header.Access-Control-Allow-Headers" = true,
-#  #    "method.response.header.Access-Control-Allow-Methods" = true,
-#  #    "method.response.header.Access-Control-Allow-Origin" = true
-#  #  }
-#}
-#
-#resource "aws_api_gateway_integration_response" "bucket_get" {
-#  depends_on = [
-#    aws_api_gateway_method.bucket_get,
-#    aws_api_gateway_integration.bucket_get
-#  ]
-#
-#  rest_api_id = var.rest_api_id
-#  resource_id = var.resource_id
-#  http_method = aws_api_gateway_method.bucket_get.http_method
-#  status_code = aws_api_gateway_method_response.bucket_get.status_code
-#
-#  #  response_parameters = {
-#  #    "method.response.header.Access-Control-Allow-Headers" =  "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
-#  #    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
-#  #    "method.response.header.Access-Control-Allow-Origin" = "'*'"
-#  #  }
-#}
+resource "aws_api_gateway_method_response" "bucket_get" {
+  rest_api_id = var.rest_api_id
+  resource_id = var.resource_id
+  http_method = aws_api_gateway_method.bucket_get.http_method
+  status_code = "200"
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" = true,
+    "method.response.header.Access-Control-Allow-Methods" = true,
+    "method.response.header.Access-Control-Allow-Origin" = true
+  }
+}
+
+resource "aws_api_gateway_integration_response" "bucket_get" {
+  depends_on = [
+    aws_api_gateway_method.bucket_get,
+    aws_api_gateway_integration.bucket_get
+  ]
+
+  rest_api_id = var.rest_api_id
+  resource_id = var.resource_id
+  http_method = aws_api_gateway_method.bucket_get.http_method
+  status_code = aws_api_gateway_method_response.bucket_get.status_code
+
+  response_parameters = {
+    "method.response.header.Access-Control-Allow-Headers" =  "'Content-Type,X-Amz-Date,Authorization,X-Api-Key,X-Amz-Security-Token'",
+    "method.response.header.Access-Control-Allow-Methods" = "'GET,OPTIONS,POST,PUT'",
+    "method.response.header.Access-Control-Allow-Origin" = "'*'"
+  }
+}
 
 output "lambda_arn" {
   value = aws_lambda_function.bucket_get.arn
