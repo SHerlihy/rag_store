@@ -60,7 +60,7 @@ resource "aws_lambda_permission" "allow_api" {
 resource "aws_api_gateway_method" "proxy_root" {
   rest_api_id   = var.rest_api_id
   resource_id   = var.root_resource_id
-  http_method   = "ANY"
+  http_method   = "GET"
   authorization = "NONE"
 }
 

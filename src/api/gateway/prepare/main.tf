@@ -32,7 +32,3 @@ module "bucket_calls" {
 output "rest_api_id" {
   value = module.init.rest_api_id
 }
-
-output "lambda_arn" {
-  value = module.bucket_calls.get_lambda_arn
-}
