@@ -31,6 +31,14 @@ variable "execution_arn" {
   type = string
 }
 
+module "authorizer" {
+  source = "./authorizer"
+
+  rest_api_id = var.rest_api_id
+  lambda_role_arn = var.lambda_role_arn
+  execution_arn = var.execution_arn
+}
+
 module "list" {
     source = "./calls/list"
 
@@ -39,6 +47,7 @@ module "list" {
     root_resource_id = var.root_resource_id
     lambda_role_arn = var.lambda_role_arn
     execution_arn = var.execution_arn
+    authorizer_id = module.authorizer.id
 }
 
 output "get_lambda_arn" {
