@@ -1,23 +1,6 @@
 import os
 
 def handler(event, context):
-#    authResponse = {
-#        'principalId': 'testUser',
-#        'policyDocument': {
-#            'Version': '2012-10-17',
-#            'Statement': [
-#                {
-#                    'Action': 'execute-api:Invoke',
-#                    'Effect': 'Allow',
-#                    'Resource': '*'
-#                }
-#            ]
-#        },
-#        'context': {
-#            'message': 'Allow'
-#        }
-#    }
-#    return authResponse
     AUTH_KEY = os.environ.get('AUTH_KEY')
     USER_ID = "testUser"
     
