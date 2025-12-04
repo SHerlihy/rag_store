@@ -1,7 +1,6 @@
 import os
-#???import asyncio
 
-def lambda_handler(event, context):
+def handler(event, context):
     AUTH_KEY = os.environ.get('AUTH_KEY')
     USER_ID = "testUser"
     

@@ -11,27 +11,102 @@ provider "aws" {
   profile = "kbaas"
 }
 
-resource "aws_lambda_permission" "allow_api_gateway" {
+variable "rest_api_id" {
+  type = string
+}
+
+variable "lambda_role_arn" {
+  type = string
+}
+
+variable "execution_arn" {
+  type = string
+}
+
+variable "auth_key" {
+  sensitive = true
+  default = "allow"
+  type = string
+}
+
+data "archive_file" "bucket_authorizer" {
+  type             = "zip"
+  source_file      = "${path.module}/handler.py"
+  output_path      = "${path.module}/handler.zip"
+  output_file_mode = "0666"
+}
+
+resource "aws_lambda_function" "bucket_authorizer" {
+  filename          = "${path.module}/handler.zip"
+  function_name     = "bucketAuthorizer"
+  role              = var.lambda_role_arn
+  handler           = "handler.handler"
+  runtime           = "python3.14"
+  
+  source_code_hash = data.archive_file.bucket_authorizer.output_base64sha256
+
+  environment {
+    variables = {
+      AUTH_KEY = var.auth_key
+    }
+  }
+}
+
+resource "aws_lambda_permission" "allow_api" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = var.auth_lambda_name
+  function_name = aws_lambda_function.bucket_authorizer.function_name
   principal     = "apigateway.amazonaws.com"
   
-  # The /*/*/* part allows invocation from any stage, method and resource path
-  # within the specified API
-  source_arn = "${var.api_execution_arn}/*/*/*"
+  source_arn = "${var.execution_arn}/*"
 }
 
-resource "aws_api_gateway_authorizer" "storage" {
-  name                   = "storage"
-  rest_api_id            = aws_api_gateway_rest_api.storage.id
-  authorizer_uri         = var.auth_invoke_arn
-  authorizer_credentials = var.lambda_exec_role
+data "aws_iam_policy_document" "invocation_assume_role" {
+  statement {
+    effect = "Allow"
 
-  type                   = "REQUEST"
-  identity_source       = "method.request.querystring.authKey"
-  
-  # Optional: Cache the authorizer results for 5 minutes (300 seconds)
-  authorizer_result_ttl_in_seconds = 300
+    principals {
+      type        = "Service"
+      identifiers = ["apigateway.amazonaws.com"]
+    }
+
+    actions = ["sts:AssumeRole"]
+  }
 }
 
+resource "aws_iam_role" "invocation_role" {
+  name               = "api_gateway_auth_invocation"
+  assume_role_policy = data.aws_iam_policy_document.invocation_assume_role.json
+}
+
+data "aws_iam_policy_document" "invocation_policy" {
+  statement {
+    effect    = "Allow"
+    actions   = ["lambda:InvokeFunction"]
+    resources = [aws_lambda_function.bucket_authorizer.arn]
+  }
+}
+
+resource "aws_iam_role_policy" "invocation_policy" {
+  name   = "bucketAuthorizer"
+  role   = aws_iam_role.invocation_role.id
+  policy = data.aws_iam_policy_document.invocation_policy.json
+}
+
+locals {
+  auth_uri = "${aws_lambda_function.bucket_authorizer.invoke_arn}"
+}
+
+resource "aws_api_gateway_authorizer" "bucket" {
+  name                   = "bucket"
+  rest_api_id            = var.rest_api_id
+  authorizer_uri         = local.auth_uri
+  type = "REQUEST"
+  identity_source                  = "method.request.querystring.authKey"
+  authorizer_credentials = aws_iam_role.invocation_role.arn
+  authorizer_result_ttl_in_seconds = 0
+}
+
+output "id" {
+  value = aws_api_gateway_authorizer.bucket.id
+}

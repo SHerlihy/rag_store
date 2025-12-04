@@ -31,6 +31,10 @@ variable "execution_arn" {
   type = string
 }
 
+variable "authorizer_id" {
+  type = string
+}
+
 data "archive_file" "bucket_get" {
   type             = "zip"
   source_file      = "${path.module}/handler.py"
@@ -57,25 +61,6 @@ resource "aws_lambda_permission" "allow_api" {
   source_arn = "${var.execution_arn}/*"
 }
 
-#resource "aws_lambda_permission" "allow_api_gateway" {
-#  statement_id  = "AllowExecutionFromAPIGateway"
-#  action        = "lambda:InvokeFunction"
-#  function_name = aws_lambda_function.bucket_get.arn
-#  principal     = "apigateway.amazonaws.com"
-#  
-#  source_arn = "${var.execution_arn}/*"
-#}
-
- # authorization = "CUSTOM"
- # authorizer_id = var.authorizer_id
-
- # api_key_required = false
- # 
- # # Add method request parameters if needed
- # request_parameters = {
- #   "method.request.querystring.authKey" = true
- # }
-
 resource "aws_api_gateway_resource" "bucket_list" {
   rest_api_id   = var.rest_api_id
   parent_id   = var.resource_id
@@ -91,7 +76,10 @@ resource "aws_api_gateway_method" "bucket_get" {
   resource_id   = local.resource_id
   http_method   = "ANY"
 
-  authorization = "NONE"
+  #authorization = "NONE"
+
+  authorization = "CUSTOM"
+  authorizer_id = var.authorizer_id
 }
 
 resource "aws_api_gateway_integration" "bucket_get" {
