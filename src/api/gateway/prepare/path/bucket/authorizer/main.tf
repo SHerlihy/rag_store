@@ -23,6 +23,12 @@ variable "execution_arn" {
   type = string
 }
 
+variable "auth_key" {
+  sensitive = true
+  default = "allow"
+  type = string
+}
+
 data "archive_file" "bucket_authorizer" {
   type             = "zip"
   source_file      = "${path.module}/handler.py"
@@ -38,6 +44,12 @@ resource "aws_lambda_function" "bucket_authorizer" {
   runtime           = "python3.14"
   
   source_code_hash = data.archive_file.bucket_authorizer.output_base64sha256
+
+  environment {
+    variables = {
+      AUTH_KEY = var.auth_key
+    }
+  }
 }
 
 resource "aws_lambda_permission" "allow_api" {
@@ -89,8 +101,8 @@ resource "aws_api_gateway_authorizer" "bucket" {
   name                   = "bucket"
   rest_api_id            = var.rest_api_id
   authorizer_uri         = local.auth_uri
-  type = "TOKEN"
-  identity_source                  = "method.request.header.Authorization"
+  type = "REQUEST"
+  identity_source                  = "method.request.querystring.authKey"
   authorizer_credentials = aws_iam_role.invocation_role.arn
   authorizer_result_ttl_in_seconds = 0
 }

@@ -40,7 +40,7 @@ module "authorizer" {
 }
 
 module "list" {
-    source = "./calls/list"
+    source = "./list"
 
     rest_api_id = var.rest_api_id
     resource_id = var.resource_id
