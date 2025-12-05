@@ -7,7 +7,7 @@ echo ${ROOT_URL}
 curl -s -o /dev/null -w "%{http_code}" -H "authorizationToken: something" -H "type: TOKEN" GET "${ROOT_URL}"
 echo -e "\n"
 
-LIST_URL="${ROOT_URL}/bucket/list"
+LIST_URL="${ROOT_URL}/doc/list"
 echo ${LIST_URL}
 curl -s -o /dev/null -w "%{http_code}" -H 'Authorization: your-jwt-or-opaque-token-here' GET "${LIST_URL}"
 echo -e "\n"

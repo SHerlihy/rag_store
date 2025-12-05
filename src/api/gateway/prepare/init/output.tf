@@ -3,7 +3,7 @@ output "rest_api_id" {
 }
 
 output "resource_id" {
-  value = aws_api_gateway_resource.bucket.id
+  value = aws_api_gateway_resource.doc.id
 }
 
 output "root_resource_id" {
