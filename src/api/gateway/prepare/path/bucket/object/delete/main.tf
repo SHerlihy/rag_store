@@ -35,10 +35,6 @@ variable "authorizer_id" {
   type = string
 }
 
-variable "resource_id" {
-  type = string
-}
-
 data "aws_region" "current" {}
 
 locals {
@@ -56,6 +52,7 @@ resource "aws_api_gateway_method" "bucket_get" {
   request_parameters = {
     "method.request.path.bucket" = true
     "method.request.path.object" = true
+    "method.request.path.authKey" = true
   }
 }
 

@@ -57,14 +57,14 @@ module "get" {
   authorizer_id = var.authorizer_id
 }
 
-#module "delete" {
-#  source = "./delete"
-#
-#  bucket_name = module.s3.bucket_name
-#  bucket_access_role = aws_iam_role.api_gateway_s3_role.arn
-#  
-#  rest_api_id = var.rest_api_id
-#  resource_id = local.resource_id
-#  root_resource_id = var.root_resource_id
-#  authorizer_id = module.authorizer.id
-#}
+module "delete" {
+  source = "./delete"
+
+  bucket_name = var.bucket_name
+  bucket_access_role = var.bucket_access_role
+  
+  rest_api_id = var.rest_api_id
+  resource_id = local.resource_id
+  root_resource_id = var.root_resource_id
+  authorizer_id = var.authorizer_id
+}
