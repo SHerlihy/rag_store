@@ -26,24 +26,19 @@ echo -e "Should succeed"
 curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
 echo -e "\n"
 
-# echo -e "\n"
-# curl -X GET "${BUCKET_URL}/?authKey=${TEST_KEY}"
-# echo -e "\n"
-
-OBJECT_URL="${BUCKET_URL}/test"
-echo -e ${OBJECT_URL}
-
-curl -X GET "${OBJECT_URL}/?authKey=${TEST_KEY}"
+curl -X GET "${BUCKET_URL}/test/?authKey=${TEST_KEY}"
 echo -e "\n"
 
-curl -X DELETE "${OBJECT_URL}/?authKey=${TEST_KEY}"
+PUT_KEY="fromTest"
+curl -X PUT --upload-file "./from_test.txt.gz" "${BUCKET_URL}/${PUT_KEY}/?authKey=${TEST_KEY}"
 echo -e "\n"
 
 curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
 echo -e "\n"
 
-curl -X PUT --upload-file "./from_test.txt.gz" "${BUCKET_URL}/fromTest/?authKey=${TEST_KEY}"
+curl -X DELETE "${BUCKET_URL}/${PUT_KEY}/?authKey=${TEST_KEY}"
 echo -e "\n"
 
 curl -X GET "${LIST_URL}/?authKey=${TEST_KEY}"
 echo -e "\n"
+
