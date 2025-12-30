@@ -45,8 +45,8 @@ locals {
   resource_id = aws_api_gateway_resource.object.id
 }
 
-module "options" {
-  source = "./options"
+module "preflight" {
+  source = "./preflight"
 
   bucket_name = var.bucket_name
   bucket_access_role = var.bucket_access_role
