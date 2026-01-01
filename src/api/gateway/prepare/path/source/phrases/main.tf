@@ -35,14 +35,14 @@ variable "authorizer_id" {
   type = string
 }
 
-resource "aws_api_gateway_resource" "object" {
+resource "aws_api_gateway_resource" "phrases" {
   rest_api_id   = var.rest_api_id
   parent_id   = var.resource_id
-  path_part   = "{object}"
+  path_part   = "phrases"
 }
 
 locals {
-  resource_id = aws_api_gateway_resource.object.id
+  resource_id = aws_api_gateway_resource.phrases.id
 }
 
 module "get" {

@@ -41,17 +41,17 @@ locals {
   region = data.aws_region.current.region
 }
 
-resource "aws_api_gateway_resource" "bucket_list" {
+resource "aws_api_gateway_resource" "source_list" {
   rest_api_id   = var.rest_api_id
   parent_id   = var.resource_id
   path_part   = "list"
 }
 
 locals {
-  resource_id = aws_api_gateway_resource.bucket_list.id
+  resource_id = aws_api_gateway_resource.source_list.id
 }
 
-resource "aws_api_gateway_method" "bucket_list" {
+resource "aws_api_gateway_method" "source_list" {
   rest_api_id   = var.rest_api_id
   resource_id   = local.resource_id
   http_method   = "GET"
@@ -60,10 +60,10 @@ resource "aws_api_gateway_method" "bucket_list" {
   authorizer_id = var.authorizer_id
 }
 
-resource "aws_api_gateway_integration" "bucket_list" {
+resource "aws_api_gateway_integration" "source_list" {
   rest_api_id = var.rest_api_id
   resource_id   = local.resource_id
-  http_method = aws_api_gateway_method.bucket_list.http_method
+  http_method = aws_api_gateway_method.source_list.http_method
 
   type        = "AWS"
   integration_http_method = "GET"
@@ -80,15 +80,15 @@ resource "aws_api_gateway_integration" "bucket_list" {
 #https://registry.terraform.io/providers/hashicorp/aws/2.33.0/docs/guides/serverless-with-aws-lambda-and-api-gateway
 ##cors stuff is v2
 ##https://docs.aws.amazon.com/lambda/latest/dg/services-apigateway.html
-resource "aws_api_gateway_method_response" "bucket_list" {
+resource "aws_api_gateway_method_response" "source_list" {
   depends_on = [
-    aws_api_gateway_method.bucket_list,
-    aws_api_gateway_integration.bucket_list
+    aws_api_gateway_method.source_list,
+    aws_api_gateway_integration.source_list
   ]
 
   rest_api_id = var.rest_api_id
   resource_id   = local.resource_id
-  http_method = aws_api_gateway_method.bucket_list.http_method
+  http_method = aws_api_gateway_method.source_list.http_method
   status_code = "200"
 
   response_models = {
@@ -102,16 +102,16 @@ resource "aws_api_gateway_method_response" "bucket_list" {
   }
 }
 
-resource "aws_api_gateway_integration_response" "bucket_list" {
+resource "aws_api_gateway_integration_response" "source_list" {
   depends_on = [
-    aws_api_gateway_method.bucket_list,
-    aws_api_gateway_integration.bucket_list
+    aws_api_gateway_method.source_list,
+    aws_api_gateway_integration.source_list
   ]
 
   rest_api_id = var.rest_api_id
   resource_id   = local.resource_id
-  http_method = aws_api_gateway_method.bucket_list.http_method
-  status_code = aws_api_gateway_method_response.bucket_list.status_code
+  http_method = aws_api_gateway_method.source_list.http_method
+  status_code = aws_api_gateway_method_response.source_list.status_code
 
   selection_pattern = ""
 

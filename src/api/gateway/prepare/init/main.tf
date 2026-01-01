@@ -13,12 +13,8 @@ provider "aws" {
 
 data "aws_region" "current" {}
 
-resource "aws_api_gateway_rest_api" "storage" {
-  name        = "storage"
-}
-
-resource "aws_api_gateway_account" "storage" {
-  cloudwatch_role_arn = aws_iam_role.gateway.arn
+resource "aws_api_gateway_rest_api" "kbaas" {
+  name        = "kbaas"
 }
 
 data "aws_iam_policy_document" "gateway_assume" {
@@ -43,8 +39,12 @@ resource "aws_iam_role_policy_attachment" "gateway_log" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AmazonAPIGatewayPushToCloudWatchLogs"
 }
 
-resource "aws_api_gateway_resource" "doc" {
-  rest_api_id = aws_api_gateway_rest_api.storage.id
-  parent_id   = aws_api_gateway_rest_api.storage.root_resource_id
-  path_part   = "{bucket}"
+resource "aws_api_gateway_account" "kbaas" {
+  cloudwatch_role_arn = aws_iam_role.gateway.arn
+}
+
+resource "aws_api_gateway_resource" "kbaas" {
+  rest_api_id = aws_api_gateway_rest_api.kbaas.id
+  parent_id   = aws_api_gateway_rest_api.kbaas.root_resource_id
+  path_part   = "kbaas"
 }
