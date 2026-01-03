@@ -59,13 +59,13 @@ module "source" {
     bucket_access_role = var.bucket_access_role
 }
 
-# module "query" {
-#     source = "./query"
-#     
-#     rest_api_id = var.rest_api_id
-#     resource_id = var.resource_id
-#
-#     invoke_arn = var.query_invoke_arn
-#
-#     authorizer_id = module.authorizer.id
-# }
+module "query" {
+    source = "./query"
+    
+    rest_api_id = var.rest_api_id
+    resource_id = var.resource_id
+
+    invoke_arn = var.query_invoke_arn
+
+    authorizer_id = module.authorizer.id
+}
