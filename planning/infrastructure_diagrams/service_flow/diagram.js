@@ -32,8 +32,6 @@ const serviceFlow = `
         KBAAS{kbaas}
 
         PREFLIGHT[preflight]
-
-        QUERY[query]
         
         STAGE --> KBAAS
         
@@ -51,6 +49,9 @@ const serviceFlow = `
         PHRASES --> AUTH
         AUTH --> PHRASES
         
+        QUERY --> AUTH
+        AUTH --> QUERY
+        
         subgraph source
 
             LIST[list]
@@ -59,7 +60,7 @@ const serviceFlow = `
             LIST <-- GET: / --> BUCKET
             PHRASES <-- PUT: / --> OBJECT
 
-            subgraph region
+            subgraph region_SOURCE
 
                 subgraph bucket
                     BUCKET[S3 Bucket]
@@ -70,6 +71,20 @@ const serviceFlow = `
 
                 end
 
+            end
+
+        end
+
+        subgraph query
+
+            QUERY[query]
+
+            QUERY <-- POST: / --> KB_LAMBDA
+
+            subgraph region_KB
+
+                KB_LAMBDA[knowledge base lambda]
+    
             end
 
         end
