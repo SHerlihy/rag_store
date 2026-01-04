@@ -1,4 +1,4 @@
-const serviceFlow = `
+```mermaid
     flowchart LR
 
     Client <--> STAGE
@@ -44,6 +44,4 @@ const serviceFlow = `
         end
         end
     end
-`
-
-export default serviceFlow
+```
