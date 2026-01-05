@@ -46,21 +46,22 @@ resource "aws_iam_role_policy_attachment" "lambda_log" {
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
 }
 
-data "archive_file" "bucket_authorizer" {
+data "archive_file" "authorizer" {
   type             = "zip"
   source_file      = "${path.module}/handler.py"
   output_path      = "${path.module}/handler.zip"
   output_file_mode = "0666"
 }
 
-resource "aws_lambda_function" "bucket_authorizer" {
+resource "aws_lambda_function" "authorizer" {
   filename          = "${path.module}/handler.zip"
+  code_sha256 = data.archive_file.authorizer.output_sha256
   function_name     = "bucketAuthorizer"
   role              = aws_iam_role.lambda_exec.arn
   handler           = "handler.handler"
   runtime           = "python3.14"
   
-  source_code_hash = data.archive_file.bucket_authorizer.output_base64sha256
+  source_code_hash = data.archive_file.authorizer.output_base64sha256
 
   environment {
     variables = {
@@ -72,7 +73,7 @@ resource "aws_lambda_function" "bucket_authorizer" {
 resource "aws_lambda_permission" "allow_api" {
   statement_id  = "AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.bucket_authorizer.function_name
+  function_name = aws_lambda_function.authorizer.function_name
   principal     = "apigateway.amazonaws.com"
   
   source_arn = "${var.execution_arn}/*"
@@ -100,22 +101,22 @@ data "aws_iam_policy_document" "invocation_policy" {
   statement {
     effect    = "Allow"
     actions   = ["lambda:InvokeFunction"]
-    resources = [aws_lambda_function.bucket_authorizer.arn]
+    resources = [aws_lambda_function.authorizer.arn]
   }
 }
 
 resource "aws_iam_role_policy" "invocation_policy" {
-  name   = "bucketAuthorizer"
+  name   = "apiAuthorizer"
   role   = aws_iam_role.invocation_role.id
   policy = data.aws_iam_policy_document.invocation_policy.json
 }
 
 locals {
-  auth_uri = "${aws_lambda_function.bucket_authorizer.invoke_arn}"
+  auth_uri = "${aws_lambda_function.authorizer.invoke_arn}"
 }
 
-resource "aws_api_gateway_authorizer" "bucket" {
-  name                   = "bucket"
+resource "aws_api_gateway_authorizer" "kbaas" {
+  name                   = "kbaas"
   rest_api_id            = var.rest_api_id
   authorizer_uri         = local.auth_uri
   type = "REQUEST"
@@ -125,5 +126,5 @@ resource "aws_api_gateway_authorizer" "bucket" {
 }
 
 output "id" {
-  value = aws_api_gateway_authorizer.bucket.id
+  value = aws_api_gateway_authorizer.kbaas.id
 }
