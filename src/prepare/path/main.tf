@@ -35,7 +35,7 @@ variable "bucket_access_role" {
     type = string
 }
 
-variable "query_invoke_arn" {
+variable "kb_id" {
     type = string
 }
 
@@ -72,7 +72,9 @@ module "query" {
     rest_api_id = var.rest_api_id
     resource_id = var.resource_id
 
-    invoke_arn = var.query_invoke_arn
-
     authorizer_id = module.authorizer.id
+
+    execution_arn = var.execution_arn
+
+    kb_id = var.kb_id
 }

@@ -26,18 +26,13 @@ variable "bucket_access_policy" {
     type = string
 }
 
-variable "query_lambda_name" {
-    type = string
-}
-
-variable "query_invoke_arn" {
+variable "kb_id" {
     type = string
 }
 
 module "init" {
   source = "./init"
 
-  query_lambda_name = var.query_lambda_name
   bucket_access_policy = var.bucket_access_policy
 }
 
@@ -53,7 +48,7 @@ module "paths" {
   bucket_name = var.bucket_name
   bucket_access_role = module.init.gateway_role_arn
 
-  query_invoke_arn = var.query_invoke_arn
+  kb_id = var.kb_id
 }
 
 output "rest_api_id" {

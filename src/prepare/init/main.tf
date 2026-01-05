@@ -15,10 +15,6 @@ variable "bucket_access_policy" {
     type = string
 }
 
-variable "query_lambda_name" {
-  type = string
-}
-
 data "aws_region" "current" {}
 
 data "aws_iam_policy_document" "gateway_assume" {
@@ -51,15 +47,6 @@ resource "aws_api_gateway_account" "kbaas" {
 resource "aws_iam_role_policy_attachment" "bucket_access" {
   role       = aws_iam_role.gateway.name
   policy_arn = var.bucket_access_policy
-}
-
-resource "aws_lambda_permission" "gateway_query" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = "${var.query_lambda_name}"
-  principal     = "apigateway.amazonaws.com"
-
-  source_arn = "${aws_api_gateway_rest_api.kbaas.execution_arn}/*/*"
 }
 
 resource "aws_api_gateway_rest_api" "kbaas" {
