@@ -1,4 +1,5 @@
 import json
+import os
 
 import boto3
 
@@ -18,6 +19,7 @@ bedrock = session.client('bedrock')
 agent = session.client('bedrock-agent-runtime')
 
 def handler(event, context) -> Respose:
+    KB_ID = os.environ.get('KB_ID')
     response = {
             'headers': {
                 'Access-Control-Allow-Origin': '*',
@@ -48,7 +50,7 @@ def handler(event, context) -> Respose:
                 retrieveAndGenerateConfiguration={
                     'type': 'KNOWLEDGE_BASE',
                     'knowledgeBaseConfiguration': {
-                        'knowledgeBaseId': "IRWAY7W1FH",
+                        'knowledgeBaseId': KB_ID,
                         'modelArn': fm_res['modelDetails']['modelArn'],
                         'retrievalConfiguration': {
                             'vectorSearchConfiguration': {
