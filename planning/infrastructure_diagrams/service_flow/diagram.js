@@ -16,17 +16,19 @@ const serviceFlow = `
         KBAAS --> PREFLIGHT
         PREFLIGHT --> KBAAS
 
-        KBAAS <--> LIST & PHRASES & QUERY
+        KBAAS <--> LIST & PHRASES & QUERY & SYNC
 
         LIST[list]
         PHRASES[phrases]
         QUERY[query]
+        SYNC[sync]
 
-        PREFLIGHT ~~~ LIST & PHRASES & QUERY 
+        PREFLIGHT ~~~ LIST & PHRASES & QUERY & SYNC
 
         LIST <-- GET: / --> BUCKET
         PHRASES <-- POST: / --> OBJECT
         QUERY <-- POST: / --> KB_LAMBDA
+        SYNC <-- PATCH: / --> SYNC_LAMBDA
 
         subgraph auth
             subgraph region_SOURCE
@@ -40,6 +42,7 @@ const serviceFlow = `
 
             subgraph region_KB
                 KB_LAMBDA[knowledge base lambda]
+                SYNC_LAMBDA[sync lambda]
             end
         end
         end
