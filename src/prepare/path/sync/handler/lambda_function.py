@@ -5,8 +5,7 @@ from datetime import datetime
 import boto3
 
 session = boto3.Session()
-bedrock = session.client('bedrock')
-agent = session.client('bedrock-agent-runtime')
+agent = session.client('bedrock-agent')
 
 # not using ingest_knowledge_base_documents as source sync after will override
 def handler(event, context):

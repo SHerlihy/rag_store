@@ -31,9 +31,9 @@ resource "terraform_data" "create_dist" {
 }
 
 data "archive_file" "sync" {
-depends_on = [
-    terraform_data.create_dist
-]
+  depends_on = [
+      terraform_data.create_dist
+  ]
 
   type             = "zip"
   source_dir = "${path.module}/dist"
@@ -93,24 +93,12 @@ resource "aws_iam_role_policy_attachment" "lambda_exec" {
 # could use fm var
 data "aws_iam_policy_document" "sync_knowledge_base" {
   statement {
-    effect = "Deny"
-    actions = [
-      "bedrock:Retrieve",
-      "bedrock:RetrieveAndGenerate"
-    ]
-    resources = [
-      "arn:aws:bedrock:us-east-1:139161572996:knowledge-base/*"
-    ]
-  }
-
-  statement {
     effect = "Allow"
     actions = [
-			"bedrock:InvokeModel",
-      "bedrock:GetFoundationModel"
+      "bedrock:StartIngestionJob"
     ]
     resources = [
-      "arn:aws:bedrock:us-east-1::foundation-model/amazon.nova-micro-v1:0"
+      "arn:aws:bedrock:us-east-1:139161572996:knowledge-base/${var.kb_id}"
     ]
   }
 }
