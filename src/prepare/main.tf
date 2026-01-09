@@ -30,6 +30,10 @@ variable "kb_id" {
     type = string
 }
 
+variable "source_id" {
+    type = string
+}
+
 module "init" {
   source = "./init"
 
@@ -49,6 +53,7 @@ module "paths" {
   bucket_access_role = module.init.gateway_role_arn
 
   kb_id = var.kb_id
+  source_id = var.source_id
 }
 
 output "rest_api_id" {

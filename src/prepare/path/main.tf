@@ -39,6 +39,10 @@ variable "kb_id" {
     type = string
 }
 
+variable "source_id" {
+    type = string
+}
+
 module "authorizer" {
     source = "./authorizer"
     
@@ -77,4 +81,18 @@ module "query" {
     execution_arn = var.execution_arn
 
     kb_id = var.kb_id
+}
+
+module "sync" {
+    source = "./sync"
+    
+    rest_api_id = var.rest_api_id
+    resource_id = var.resource_id
+
+    authorizer_id = module.authorizer.id
+
+    execution_arn = var.execution_arn
+
+    kb_id = var.kb_id
+    source_id = var.source_id
 }

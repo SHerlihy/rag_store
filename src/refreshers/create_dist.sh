@@ -1,0 +1,1 @@
+../prepare/path/sync/handler/create_dist.sh
