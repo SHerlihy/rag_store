@@ -1,8 +1,8 @@
 #!/bin/bash
 
 TEST_KEY="allow"
-ROOT_URL="$(terraform -chdir=./deploy output -raw api_path)"
-BUCKET_NAME="$(terraform -chdir=./prepare output -raw bucket_name)"
+ROOT_URL="$(terraform -chdir=./develop output -raw api_path)"
+BUCKET_NAME="$(terraform -chdir=./api output -raw bucket_name)"
 
 API_URL=${ROOT_URL}/kbaas
 

@@ -32,3 +32,7 @@ resource "aws_api_gateway_stage" "main" {
 output "api_path" {
     value = aws_api_gateway_stage.main.invoke_url
 }
+
+output "deploy_id" {
+  value = aws_api_gateway_deployment.main.id
+}
