@@ -14,7 +14,7 @@ provider "aws" {
 module "authorizer" {
     source = "./authorizer"
 
-    build_uid = var.build_uid
+    stage_uid = var.stage_uid
     
     api_id = var.api_bind.api_id
     execution_arn = var.execution_arn
@@ -41,7 +41,7 @@ module "preflight" {
 # module "query" {
 #     source = "./query"
 #
-#     build_uid = var.build_uid
+#     stage_uid = var.stage_uid
 #     
 #     api_bind = var.api_bind
 #     execution_arn = var.execution_arn
@@ -54,7 +54,7 @@ module "preflight" {
 # module "sync" {
 #     source = "./sync"
 #     
-#     build_uid = var.build_uid
+#     stage_uid = var.stage_uid
 #
 #     api_bind = var.api_bind
 #     execution_arn = var.execution_arn

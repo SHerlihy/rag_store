@@ -1,4 +1,4 @@
-variable "build_uid" {
+variable "stage_uid" {
   type = string
 }
 

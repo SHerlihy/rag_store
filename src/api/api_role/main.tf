@@ -14,6 +14,8 @@ provider "aws" {
 data "aws_region" "current" {}
 
 data "aws_iam_policy_document" "gateway_assume" {
+  policy_id = "${var.stage_uid}GatewayAssume"
+
   statement {
     effect = "Allow"
 
@@ -27,7 +29,7 @@ data "aws_iam_policy_document" "gateway_assume" {
 }
 
 resource "aws_iam_role" "gateway" {
-  name = "${var.build_uid}_gateway_api"
+  name = "${var.stage_uid}Gateway"
   assume_role_policy = data.aws_iam_policy_document.gateway_assume.json
 }
 
@@ -43,10 +45,4 @@ resource "aws_api_gateway_account" "kbaas" {
 resource "aws_iam_role_policy_attachment" "bucket_access" {
   role       = aws_iam_role.gateway.name
   policy_arn = var.bucket_access_policy
-}
-
-resource "aws_api_gateway_resource" "kbaas" {
-  rest_api_id = var.api_id
-  parent_id   = var.root_id
-  path_part   = "${var.build_uid}"
 }

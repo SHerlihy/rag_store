@@ -16,7 +16,7 @@ cat ./variables/shared/shared.txt >> ./api/terraform.tfvars
 cat ./variables/develop/api.txt >> ./api/terraform.tfvars
 
 echo "auth_key = \"${AUTH_KEY}\"" >> ./api/terraform.tfvars
-echo "build_uid = \"dev\"" >> ./api/terraform.tfvars
+echo "stage_uid = \"dev\"" >> ./api/terraform.tfvars
 
 #terraform -chdir=./api plan
 terraform -chdir=./api apply --auto-approve

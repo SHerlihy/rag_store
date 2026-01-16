@@ -11,7 +11,7 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "build_uid" {
+variable "stage_uid" {
   type = string
 }
 
@@ -34,7 +34,7 @@ variable "source_id" {
 module "handler" {
   source = "./handler"
 
-  build_uid = var.build_uid
+  stage_uid = var.stage_uid
 
   kb_id = var.kb_id
   source_id = var.source_id
