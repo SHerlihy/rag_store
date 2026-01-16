@@ -19,4 +19,4 @@ echo "auth_key = \"${AUTH_KEY}\"" >> ./api/terraform.tfvars
 echo "stage_uid = \"dev\"" >> ./api/terraform.tfvars
 
 #terraform -chdir=./api plan
-terraform -chdir=./api apply --auto-approve
+terraform -chdir=./api apply

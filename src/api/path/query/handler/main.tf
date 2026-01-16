@@ -34,7 +34,7 @@ resource "aws_lambda_function" "query" {
   filename = "${path.module}/my_deployment_package.zip"
   code_sha256 = data.archive_file.query.output_sha256
 
-  function_name = "${var.stage_uid}-query"
+  function_name = "${var.stage_uid}Query"
   handler = "lambda_function.handler"
 
   runtime = "python3.14"
@@ -57,7 +57,7 @@ resource "aws_cloudwatch_log_group" "query" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "${var.stage_uid}_query_lambda"
+  name = "${var.stage_uid}QueryLambda"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -80,6 +80,7 @@ resource "aws_iam_role_policy_attachment" "lambda_exec" {
 
 # could use fm var
 data "aws_iam_policy_document" "query_knowledge_base" {
+  policy_id = "${var.stage_uid}QueryKnowledgeBase"
   statement {
     effect = "Allow"
     actions = [
@@ -113,7 +114,7 @@ resource "aws_iam_role_policy_attachment" "query_knowledge_base" {
 }
 
 resource "aws_lambda_permission" "gateway_query" {
-  statement_id  = "AllowAPIGatewayInvoke"
+  statement_id  = "${var.stage_uid}AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.query.id}"
   principal     = "apigateway.amazonaws.com"

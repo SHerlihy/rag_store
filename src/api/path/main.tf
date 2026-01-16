@@ -28,39 +28,39 @@ module "preflight" {
     api_bind = var.api_bind
 }
 
-# module "source" {
-#     source = "./source"
-#
-#     api_bind = var.api_bind
-#
-#     authorizer_id = module.authorizer.id
-#
-#     bucket = var.bucket
-# }
-#
-# module "query" {
-#     source = "./query"
-#
-#     stage_uid = var.stage_uid
-#     
-#     api_bind = var.api_bind
-#     execution_arn = var.execution_arn
-#
-#     authorizer_id = module.authorizer.id
-#
-#     kb_id = var.kb_id
-# }
-#
-# module "sync" {
-#     source = "./sync"
-#     
-#     stage_uid = var.stage_uid
-#
-#     api_bind = var.api_bind
-#     execution_arn = var.execution_arn
-#
-#     authorizer_id = module.authorizer.id
-#
-#     kb_id = var.kb_id
-#     source_id = var.source_id
-# }
+module "query" {
+    source = "./query"
+
+    stage_uid = var.stage_uid
+    
+    api_bind = var.api_bind
+    execution_arn = var.execution_arn
+
+    authorizer_id = module.authorizer.id
+
+    kb_id = var.kb_id
+}
+
+module "sync" {
+    source = "./sync"
+    
+    stage_uid = var.stage_uid
+
+    api_bind = var.api_bind
+    execution_arn = var.execution_arn
+
+    authorizer_id = module.authorizer.id
+
+    kb_id = var.kb_id
+    source_id = var.source_id
+}
+
+module "source" {
+    source = "./source"
+
+    api_bind = var.api_bind
+
+    authorizer_id = module.authorizer.id
+
+    bucket = var.bucket
+}
