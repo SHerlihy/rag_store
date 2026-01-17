@@ -1,0 +1,5 @@
+root = {
+    api_id = "xf72z2pmw7"
+    root_id = "nqll05mllc"
+    execution_arn = "arn:aws:execute-api:us-east-1:139161572996:xf72z2pmw7"
+}

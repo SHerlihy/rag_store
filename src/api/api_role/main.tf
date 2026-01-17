@@ -11,13 +11,11 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "bucket_access_policy" {
-    type = string
-}
-
 data "aws_region" "current" {}
 
 data "aws_iam_policy_document" "gateway_assume" {
+  policy_id = "${var.stage_uid}GatewayAssume"
+
   statement {
     effect = "Allow"
 
@@ -31,7 +29,7 @@ data "aws_iam_policy_document" "gateway_assume" {
 }
 
 resource "aws_iam_role" "gateway" {
-  name = "gateway_api"
+  name = "${var.stage_uid}Gateway"
   assume_role_policy = data.aws_iam_policy_document.gateway_assume.json
 }
 
@@ -47,19 +45,4 @@ resource "aws_api_gateway_account" "kbaas" {
 resource "aws_iam_role_policy_attachment" "bucket_access" {
   role       = aws_iam_role.gateway.name
   policy_arn = var.bucket_access_policy
-}
-
-resource "aws_api_gateway_rest_api" "kbaas" {
-  name        = "kbaas"
-  
-  binary_media_types = [
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-    "application/msword"
-  ]
-}
-
-resource "aws_api_gateway_resource" "kbaas" {
-  rest_api_id = aws_api_gateway_rest_api.kbaas.id
-  parent_id   = aws_api_gateway_rest_api.kbaas.root_resource_id
-  path_part   = "kbaas"
 }

@@ -1,1 +1,1 @@
-../prepare/path/sync/handler/create_dist.sh
+../api/path/sync/handler/create_dist.sh

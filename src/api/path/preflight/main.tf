@@ -11,14 +11,6 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "rest_api_id" {
-  type = string
-}
-
-variable "resource_id" {
-  type = string
-}
-
 data "aws_region" "current" {}
 
 locals {
@@ -26,13 +18,13 @@ locals {
 }
 
 resource "aws_api_gateway_resource" "any" {
-  rest_api_id = var.rest_api_id
-  parent_id   = var.resource_id
+  rest_api_id = var.api_bind.api_id
+  parent_id   = var.api_bind.resource_id
   path_part   = "{proxy+}"
 }
 
 resource "aws_api_gateway_method" "preflight" {
-  rest_api_id   = var.rest_api_id
+  rest_api_id   = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.any.id
   http_method   = "OPTIONS"
 
@@ -40,7 +32,7 @@ resource "aws_api_gateway_method" "preflight" {
 }
 
 resource "aws_api_gateway_integration" "preflight" {
-  rest_api_id = var.rest_api_id
+  rest_api_id = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.any.id
   http_method = aws_api_gateway_method.preflight.http_method
 
@@ -59,7 +51,7 @@ resource "aws_api_gateway_method_response" "preflight" {
     aws_api_gateway_integration.preflight
   ]
 
-  rest_api_id = var.rest_api_id
+  rest_api_id = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.any.id
   http_method = aws_api_gateway_method.preflight.http_method
   status_code = "200"
@@ -77,7 +69,7 @@ resource "aws_api_gateway_integration_response" "preflight" {
     aws_api_gateway_integration.preflight
   ]
 
-  rest_api_id = var.rest_api_id
+  rest_api_id = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.any.id
   http_method = aws_api_gateway_method.preflight.http_method
   status_code = aws_api_gateway_method_response.preflight.status_code

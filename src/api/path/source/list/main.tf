@@ -11,26 +11,6 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "bucket_name" {
-  type = string
-}
-
-variable "bucket_access_role" {
-  type = string
-}
-
-variable "rest_api_id" {
-  type = string
-}
-
-variable "resource_id" {
-  type = string
-}
-
-variable "authorizer_id" {
-  type = string
-}
-
 data "aws_region" "current" {}
 
 locals {
@@ -38,8 +18,8 @@ locals {
 }
 
 resource "aws_api_gateway_resource" "source_list" {
-  rest_api_id   = var.rest_api_id
-  parent_id   = var.resource_id
+  rest_api_id   = var.api_bind.api_id
+  parent_id   = var.api_bind.resource_id
   path_part   = "list"
 }
 
@@ -48,7 +28,7 @@ locals {
 }
 
 resource "aws_api_gateway_method" "source_list" {
-  rest_api_id   = var.rest_api_id
+  rest_api_id   = var.api_bind.api_id
   resource_id   = local.resource_id
   http_method   = "GET"
 
@@ -57,14 +37,14 @@ resource "aws_api_gateway_method" "source_list" {
 }
 
 resource "aws_api_gateway_integration" "source_list" {
-  rest_api_id = var.rest_api_id
+  rest_api_id = var.api_bind.api_id
   resource_id   = local.resource_id
   http_method = aws_api_gateway_method.source_list.http_method
 
   type        = "AWS"
   integration_http_method = "GET"
-  uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}"
-  credentials = var.bucket_access_role
+  uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket.bucket_name}"
+  credentials = var.bucket.bucket_access_role
 }
 
 #response not in guide
@@ -77,7 +57,7 @@ resource "aws_api_gateway_method_response" "source_list" {
     aws_api_gateway_integration.source_list
   ]
 
-  rest_api_id = var.rest_api_id
+  rest_api_id = var.api_bind.api_id
   resource_id   = local.resource_id
   http_method = aws_api_gateway_method.source_list.http_method
   status_code = "200"
@@ -99,7 +79,7 @@ resource "aws_api_gateway_integration_response" "source_list" {
     aws_api_gateway_integration.source_list
   ]
 
-  rest_api_id = var.rest_api_id
+  rest_api_id = var.api_bind.api_id
   resource_id   = local.resource_id
   http_method = aws_api_gateway_method.source_list.http_method
   status_code = aws_api_gateway_method_response.source_list.status_code

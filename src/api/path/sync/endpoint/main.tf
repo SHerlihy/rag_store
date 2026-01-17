@@ -11,14 +11,6 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "rest_api_id" {
-  type = string
-}
-
-variable "resource_id" {
-  type = string
-}
-
 variable "authorizer_id" {
   type = string
 }
@@ -28,13 +20,13 @@ variable "invoke_arn" {
 }
 
 resource "aws_api_gateway_resource" "sync" {
-  rest_api_id = var.rest_api_id
-  parent_id   = var.resource_id
+  rest_api_id = var.api_bind.api_id
+  parent_id   = var.api_bind.resource_id
   path_part   = "sync"
 }
 
 resource "aws_api_gateway_method" "sync" {
-  rest_api_id   = var.rest_api_id
+  rest_api_id   = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.sync.id
   http_method   = "PATCH"
 
@@ -43,7 +35,7 @@ resource "aws_api_gateway_method" "sync" {
 }
 
 resource "aws_api_gateway_integration" "sync" {
-  rest_api_id   = var.rest_api_id
+  rest_api_id   = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.sync.id
 
   http_method          = aws_api_gateway_method.sync.http_method
@@ -59,7 +51,7 @@ aws_api_gateway_resource.sync,
 aws_api_gateway_method.sync
   ]
 
-  rest_api_id   = var.rest_api_id
+  rest_api_id   = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.sync.id
 
   http_method = aws_api_gateway_method.sync.http_method

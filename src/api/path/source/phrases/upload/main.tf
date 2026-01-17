@@ -11,26 +11,6 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "bucket_name" {
-  type = string
-}
-
-variable "bucket_access_role" {
-  type = string
-}
-
-variable "rest_api_id" {
-  type = string
-}
-
-variable "resource_id" {
-  type = string
-}
-
-variable "authorizer_id" {
-  type = string
-}
-
 data "aws_region" "current" {}
 
 locals {
@@ -38,8 +18,8 @@ locals {
 }
 
 resource "aws_api_gateway_method" "bucket_put" {
-  rest_api_id   = var.rest_api_id
-  resource_id   = var.resource_id
+  rest_api_id   = var.api_bind.api_id
+  resource_id   = var.api_bind.resource_id
   http_method   = "PUT"
 
   authorization = "CUSTOM"
@@ -47,14 +27,14 @@ resource "aws_api_gateway_method" "bucket_put" {
 }
 
 resource "aws_api_gateway_integration" "bucket_put" {
-  rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
+  rest_api_id = var.api_bind.api_id
+  resource_id   = var.api_bind.resource_id
   http_method = aws_api_gateway_method.bucket_put.http_method
 
   type        = "AWS"
   integration_http_method = "PUT"
-  uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket_name}/phrases"
-  credentials = var.bucket_access_role
+  uri         = "arn:aws:apigateway:${local.region}:s3:path/${var.bucket.bucket_name}/phrases"
+  credentials = var.bucket.bucket_access_role
 
   passthrough_behavior    = "WHEN_NO_TEMPLATES"
 }
@@ -65,8 +45,8 @@ resource "aws_api_gateway_method_response" "bucket_put" {
     aws_api_gateway_integration.bucket_put
   ]
 
-  rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
+  rest_api_id = var.api_bind.api_id
+  resource_id   = var.api_bind.resource_id
   http_method = aws_api_gateway_method.bucket_put.http_method
   status_code = "200"
 
@@ -87,8 +67,8 @@ resource "aws_api_gateway_integration_response" "bucket_put" {
     aws_api_gateway_integration.bucket_put
   ]
 
-  rest_api_id = var.rest_api_id
-  resource_id   = var.resource_id
+  rest_api_id = var.api_bind.api_id
+  resource_id   = var.api_bind.resource_id
   http_method = aws_api_gateway_method.bucket_put.http_method
   status_code = aws_api_gateway_method_response.bucket_put.status_code
 

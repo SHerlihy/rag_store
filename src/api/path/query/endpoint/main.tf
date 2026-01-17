@@ -11,11 +11,7 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "rest_api_id" {
-  type = string
-}
-
-variable "resource_id" {
+variable "invoke_arn" {
   type = string
 }
 
@@ -23,18 +19,15 @@ variable "authorizer_id" {
   type = string
 }
 
-variable "invoke_arn" {
-    type = string
-}
 
 resource "aws_api_gateway_resource" "query" {
-  rest_api_id = var.rest_api_id
-  parent_id   = var.resource_id
+  rest_api_id = var.api_bind.api_id
+  parent_id   = var.api_bind.resource_id
   path_part   = "query"
 }
 
 resource "aws_api_gateway_method" "query" {
-  rest_api_id   = var.rest_api_id
+  rest_api_id   = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.query.id
   http_method   = "POST"
 
@@ -43,7 +36,7 @@ resource "aws_api_gateway_method" "query" {
 }
 
 resource "aws_api_gateway_integration" "query" {
-  rest_api_id   = var.rest_api_id
+  rest_api_id   = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.query.id
 
   http_method          = aws_api_gateway_method.query.http_method
@@ -59,7 +52,7 @@ aws_api_gateway_resource.query,
 aws_api_gateway_method.query
   ]
 
-  rest_api_id   = var.rest_api_id
+  rest_api_id   = var.api_bind.api_id
   resource_id   = aws_api_gateway_resource.query.id
 
   http_method = aws_api_gateway_method.query.http_method

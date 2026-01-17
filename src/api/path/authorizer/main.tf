@@ -11,7 +11,11 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "rest_api_id" {
+variable "stage_uid" {
+  type = string
+}
+
+variable "api_id" {
   type = string
 }
 
@@ -26,7 +30,7 @@ variable "auth_key" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "serverless_lambda"
+  name = "${var.stage_uid}ServerlessLambda"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -44,6 +48,7 @@ resource "aws_iam_role" "lambda_exec" {
 resource "aws_iam_role_policy_attachment" "lambda_log" {
   role       = aws_iam_role.lambda_exec.name
   policy_arn = "arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole"
+
 }
 
 data "archive_file" "authorizer" {
@@ -56,7 +61,7 @@ data "archive_file" "authorizer" {
 resource "aws_lambda_function" "authorizer" {
   filename          = "${path.module}/handler.zip"
   code_sha256 = data.archive_file.authorizer.output_sha256
-  function_name     = "bucketAuthorizer"
+  function_name     = "${var.stage_uid}GatewayAuthorizer"
   role              = aws_iam_role.lambda_exec.arn
   handler           = "handler.handler"
   runtime           = "python3.14"
@@ -71,7 +76,7 @@ resource "aws_lambda_function" "authorizer" {
 }
 
 resource "aws_lambda_permission" "allow_api" {
-  statement_id  = "AllowExecutionFromAPIGateway"
+  statement_id  = "${var.stage_uid}AllowExecutionFromAPIGateway"
   action        = "lambda:InvokeFunction"
   function_name = aws_lambda_function.authorizer.function_name
   principal     = "apigateway.amazonaws.com"
@@ -80,6 +85,7 @@ resource "aws_lambda_permission" "allow_api" {
 }
 
 data "aws_iam_policy_document" "invocation_assume_role" {
+  policy_id = "${var.stage_uid}InvocationAssumeRole"
   statement {
     effect = "Allow"
 
@@ -93,11 +99,12 @@ data "aws_iam_policy_document" "invocation_assume_role" {
 }
 
 resource "aws_iam_role" "invocation_role" {
-  name               = "api_gateway_auth_invocation"
+  name               = "${var.stage_uid}GatewayAuthInvocation"
   assume_role_policy = data.aws_iam_policy_document.invocation_assume_role.json
 }
 
 data "aws_iam_policy_document" "invocation_policy" {
+  policy_id = "${var.stage_uid}AuthInvocation"
   statement {
     effect    = "Allow"
     actions   = ["lambda:InvokeFunction"]
@@ -106,7 +113,7 @@ data "aws_iam_policy_document" "invocation_policy" {
 }
 
 resource "aws_iam_role_policy" "invocation_policy" {
-  name   = "apiAuthorizer"
+  name   = "${var.stage_uid}ApiAuthorizer"
   role   = aws_iam_role.invocation_role.id
   policy = data.aws_iam_policy_document.invocation_policy.json
 }
@@ -116,8 +123,8 @@ locals {
 }
 
 resource "aws_api_gateway_authorizer" "kbaas" {
-  name                   = "kbaas"
-  rest_api_id            = var.rest_api_id
+  name                   = "${var.stage_uid}kbaas"
+  rest_api_id            = var.api_id
   authorizer_uri         = local.auth_uri
   type = "REQUEST"
   identity_source                  = "method.request.querystring.authKey"

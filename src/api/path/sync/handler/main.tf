@@ -11,6 +11,10 @@ provider "aws" {
   profile = "kbaas"
 }
 
+variable "stage_uid" {
+  type = string
+}
+
 variable "execution_arn" {
   type = string
 }
@@ -34,7 +38,7 @@ resource "aws_lambda_function" "sync" {
   filename = "${path.module}/my_deployment_package.zip"
   code_sha256 = data.archive_file.sync.output_sha256
 
-  function_name = "sync"
+  function_name = "${var.stage_uid}Sync"
   handler = "lambda_function.handler"
 
   runtime = "python3.14"
@@ -58,7 +62,7 @@ resource "aws_cloudwatch_log_group" "sync" {
 }
 
 resource "aws_iam_role" "lambda_exec" {
-  name = "sync_lambda"
+  name = "${var.stage_uid}SyncLambda"
 
   assume_role_policy = jsonencode({
     Version = "2012-10-17"
@@ -81,6 +85,7 @@ resource "aws_iam_role_policy_attachment" "lambda_exec" {
 
 # could use fm var
 data "aws_iam_policy_document" "sync_knowledge_base" {
+  policy_id = "${var.stage_uid}SyncKnowledgeBase"
   statement {
     effect = "Allow"
     actions = [
@@ -102,7 +107,7 @@ resource "aws_iam_role_policy_attachment" "sync_knowledge_base" {
 }
 
 resource "aws_lambda_permission" "gateway_sync" {
-  statement_id  = "AllowAPIGatewayInvoke"
+  statement_id  = "${var.stage_uid}AllowAPIGatewayInvoke"
   action        = "lambda:InvokeFunction"
   function_name = "${aws_lambda_function.sync.id}"
   principal     = "apigateway.amazonaws.com"
