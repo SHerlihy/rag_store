@@ -25,11 +25,11 @@ module "paths" {
   stage_uid = var.stage_uid
 
   api_bind = {
-    api_id = var.root.api_id
-    resource_id = var.root.root_id
+    api_id = var.api_id
+    resource_id = var.root_id
   }
 
-  execution_arn = var.root.execution_arn
+  execution_arn = var.execution_arn
 
   auth_key = var.auth_key
 
