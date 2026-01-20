@@ -17,17 +17,18 @@ variable "source_id" {
     type = string
 }
 
-variable "root" {
-  type = object({
-    api_id = string
-    root_id = string
-    execution_arn = string
-  })
+variable "api_id" {
+  type = string
 }
 
-variable "bucket" {
-  type = object({
-    bucket_name = string
-    bucket_access_policy = string
-  })
+variable "root_id" {
+  type = string
+}
+
+variable "execution_arn" {
+  type = string
+}
+
+variable "bucket_access_policy" {
+  type = string
 }

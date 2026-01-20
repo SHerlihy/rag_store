@@ -1,5 +1,0 @@
-root = {
-  "api_id" = "mc4mepqu58"
-  "execution_arn" = "arn:aws:execute-api:us-east-1:139161572996:mc4mepqu58"
-  "root_id" = "x2vjl5gtrd"
-}

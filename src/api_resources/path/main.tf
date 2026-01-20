@@ -22,21 +22,12 @@ module "authorizer" {
     auth_key = var.auth_key
 }
 
-module "preflight" {
-    source = "./preflight"
-
-    api_bind = var.api_bind
-}
-
 module "query" {
     source = "./query"
 
     stage_uid = var.stage_uid
     
-    api_bind = var.api_bind
     execution_arn = var.execution_arn
-
-    authorizer_id = module.authorizer.id
 
     kb_id = var.kb_id
 }
@@ -46,21 +37,20 @@ module "sync" {
     
     stage_uid = var.stage_uid
 
-    api_bind = var.api_bind
     execution_arn = var.execution_arn
-
-    authorizer_id = module.authorizer.id
 
     kb_id = var.kb_id
     source_id = var.source_id
 }
 
-module "source" {
-    source = "./source"
+output "authorizer_id" {
+  value = module.authorizer.id
+}
 
-    api_bind = var.api_bind
+output "query_invoke_arn" {
+  value = module.query.invoke_arn
+}
 
-    authorizer_id = module.authorizer.id
-
-    bucket = var.bucket
+output "sync_invoke_arn" {
+  value = module.sync.invoke_arn
 }

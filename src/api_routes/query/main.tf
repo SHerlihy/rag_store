@@ -11,29 +11,12 @@ provider "aws" {
   profile = "kbaas"
 }
 
-variable "stage_uid" {
-  type = string
-}
-
-variable "execution_arn" {
-    type = string
-}
-
 variable "authorizer_id" {
   type = string
 }
 
-variable "kb_id" {
+variable "invoke_arn" {
   type = string
-}
-
-module "handler" {
-  source = "./handler"
-
-  stage_uid = var.stage_uid
-
-  kb_id = var.kb_id
-  execution_arn = var.execution_arn
 }
 
 module "endpoint" {
@@ -43,5 +26,5 @@ module "endpoint" {
 
   authorizer_id = var.authorizer_id
 
-  invoke_arn = module.handler.invoke_arn
+  invoke_arn = var.invoke_arn
 }

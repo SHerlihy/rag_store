@@ -15,19 +15,11 @@ variable "stage_uid" {
   type = string
 }
 
-variable "authorizer_id" {
-  type = string
-}
-
 variable "execution_arn" {
     type = string
 }
 
 variable "kb_id" {
-  type = string
-}
-
-variable "source_id" {
   type = string
 }
 
@@ -37,17 +29,9 @@ module "handler" {
   stage_uid = var.stage_uid
 
   kb_id = var.kb_id
-  source_id = var.source_id
-
   execution_arn = var.execution_arn
 }
 
-module "endpoint" {
-  source = "./endpoint"
-
-  api_bind = var.api_bind
-
-  authorizer_id = var.authorizer_id
-
-  invoke_arn = module.handler.invoke_arn
+output "invoke_arn" {
+  value = module.handler.invoke_arn
 }
