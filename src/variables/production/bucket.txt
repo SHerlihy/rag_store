@@ -1,4 +1,2 @@
-bucket = {
-    bucket_name = "docs20260106071350159900000001"
-    bucket_access_policy = "arn:aws:iam::139161572996:policy/APIGatewayS3Access"
-}
+bucket_name = "docs20260106071350159900000001"
+bucket_access_policy = "arn:aws:iam::139161572996:policy/APIGatewayS3Access"
