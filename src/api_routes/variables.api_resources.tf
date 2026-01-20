@@ -1,7 +1,3 @@
-variable "gateway_role_arn" {
-  type = string
-}
-
 variable "authorizer_id" {
   type = string
 }
