@@ -1,5 +1,5 @@
 import unittest
-from lambda_utils import splitByLineCount, findTerminatorIdcs
+from lambda_utils import findTerminatorIdcs
 
 class TerminatorIdcsShould(unittest.TestCase):
     def test_return_empty_array_for_empty_string(self):
