@@ -1,6 +1,6 @@
 import re
 
-def findTerminatorIdcs(text):
+def findTerminatedIdcs(text):
     tIdcs = []
     terminators = re.compile('(?s:.)([\\.!?"])(?s:.)')
     matches = re.finditer(terminators, text)
@@ -14,30 +14,39 @@ def findTerminatorIdcs(text):
         after = text[tIdx+1]
 
         if term == '"':
-            if after == "\n":
-                tIdcs.append(tIdx)
+            if after != "\n":
+                continue
 
-        elif term == ".":
-            if after != "." and prev != ".":
-                tIdcs.append(tIdx)
+        if term == after or term == prev:
+            continue
 
-        else:
-            tIdcs.append(tIdx)
+        if after == "\n":
+            tIdx+=1
+
+        tIdcs.append(tIdx+1)
 
     return tIdcs
 
-# def splitByLineCount(text, count):
-#     splits = []
-#
-#     tIdcs = findTerminatorIdcs(text)
-#
-#     lIdx = 0
-#     rIdx = count
-#     while rIdx < len(splits):
-#         splits.append(text[lIdx:rIdx])
-#         lIdx = rIdx
-#         rIdx+=count
-#
-#     splits.append(text[lIdx:])
-#
-#     return splits
+def splitByLineCount(text, count):
+    splits = []
+
+    tIdcs = findTerminatedIdcs(text)
+
+    splits.append(text[:tIdcs[0]])
+
+    tIdxLeft = 0
+    tIdxRight = count
+    while tIdxRight < len(tIdcs):
+        sIdxLeft = tIdcs[tIdxLeft]
+        sIdxRight = tIdcs[tIdxRight]
+
+        splits.append(text[sIdxLeft:sIdxRight])
+        tIdxLeft = tIdxRight
+        tIdxRight+=count
+
+    finalTerminated = tIdcs[tIdxLeft]
+
+    if finalTerminated < len(text):
+        splits.append(text[finalTerminated:])
+
+    return splits
