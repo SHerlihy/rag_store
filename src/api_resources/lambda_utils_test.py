@@ -1,35 +1,49 @@
 import unittest
-from lambda_utils import findTerminatedIdcs, splitByLineCount
+from lambda_utils import Text_To_Sentance_Array
 
 class TerminatedIdcsShould(unittest.TestCase):
     def test_return_empty_array_for_empty_string(self):
-        terminatorIdcs = findTerminatedIdcs("")
-        self.assertEqual(terminatorIdcs, [])
+        to_sentances = Text_To_Sentance_Array("", 1)
+        terminator_idcs = to_sentances.find_terminated_idcs()
+
+        self.assertEqual(terminator_idcs, [])
 
     def test_return_empty_array_for_non_terminating_string(self):
-        terminatorIdcs = findTerminatedIdcs("nio[vron903u90t2niowv")
-        self.assertEqual(terminatorIdcs, [])
+        to_sentances = Text_To_Sentance_Array("nio[vron903u90t2niowv", 1)
+        terminator_idcs = to_sentances.find_terminated_idcs()
+
+        self.assertEqual(terminator_idcs, [])
 
     def test_return_empty_array_for_non_terminating_terminators_string(self):
-        terminatorIdcs = findTerminatedIdcs('vow...vniw"vw"""p')
-        self.assertEqual(terminatorIdcs, [])
+        to_sentances = Text_To_Sentance_Array('vow...vniw"vw"""p', 1)
+        terminator_idcs = to_sentances.find_terminated_idcs()
+
+        self.assertEqual(terminator_idcs, [])
 
 class TerminatedIdcsShouldReturnCorrectIdcs(unittest.TestCase):
     def test_for_period_string(self):
-        terminatorIdcs = findTerminatedIdcs("0123. 67. 101112.")
-        self.assertEqual(terminatorIdcs, [5,9])
+        to_sentances = Text_To_Sentance_Array("0123. 67. 101112.", 1)
+        terminator_idcs = to_sentances.find_terminated_idcs()
+
+        self.assertEqual(terminator_idcs, [5,9])
 
     def test_for_punctuation_string(self):
-        terminatorIdcs = findTerminatedIdcs("012? 5678! 12. 56?")
-        self.assertEqual(terminatorIdcs, [4,10,14])
+        to_sentances = Text_To_Sentance_Array("012? 5678! 12. 56?", 1)
+        terminator_idcs = to_sentances.find_terminated_idcs()
+
+        self.assertEqual(terminator_idcs, [4,10,14])
 
     def test_for_quotes_string(self):
-        terminatorIdcs = findTerminatedIdcs('01234 "789"\n2345')
-        self.assertEqual(terminatorIdcs, [12])
+        to_sentances = Text_To_Sentance_Array('01234 "789"\n2345', 1)
+        terminator_idcs = to_sentances.find_terminated_idcs()
+
+        self.assertEqual(terminator_idcs, [12])
 
     def test_for_newline_string(self):
-        terminatorIdcs = findTerminatedIdcs("012?\n5678!\n12.\n56?")
-        self.assertEqual(terminatorIdcs, [5,11,15])
+        to_sentances = Text_To_Sentance_Array("012?\n5678!\n12.\n56?", 1)
+        terminator_idcs = to_sentances.find_terminated_idcs()
+
+        self.assertEqual(terminator_idcs, [5,11,15])
 
     def test_for_excess_string(self):
         sentances = [
@@ -39,8 +53,10 @@ class TerminatedIdcsShouldReturnCorrectIdcs(unittest.TestCase):
 
         multi_punctuation = "".join(sentances)
 
-        terminatorIdcs = findTerminatedIdcs(multi_punctuation)
-        self.assertEqual(terminatorIdcs, [14, 28])
+        to_sentances = Text_To_Sentance_Array(multi_punctuation, 1)
+        terminator_idcs = to_sentances.find_terminated_idcs()
+
+        self.assertEqual(terminator_idcs, [14, 28])
 
 class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
     def test_for_single_strings(self):
@@ -52,11 +68,10 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
             'vavvaniovwip!\n',
             'vavvaniovwip?\n'
             ]
-
         multi_punctuation = "".join(sentances)
 
-        segments = splitByLineCount(multi_punctuation, 1)
-        
+        to_sentances = Text_To_Sentance_Array(multi_punctuation, 1)
+        segments = to_sentances.get_sentances()
 
         self.assertEqual(len(segments), len(sentances))
 
@@ -71,10 +86,10 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
             'vavvaniovwip!\n',
             'vavvaniovwip?\n'
             ]
-    
         multi_punctuation = "".join(sentances)
-    
-        segments = splitByLineCount(multi_punctuation, 2)
+
+        to_sentances = Text_To_Sentance_Array(multi_punctuation, 2)
+        segments = to_sentances.get_sentances()
     
         self.assertEqual(len(segments), 3)
     
@@ -93,10 +108,10 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
             'vavvaniovwip!\n',
             'vavvaniovwip?\n'
             ]
-    
         multi_punctuation = "".join(sentances)
-    
-        segments = splitByLineCount(multi_punctuation, 3)
+
+        to_sentances = Text_To_Sentance_Array(multi_punctuation, 3)
+        segments = to_sentances.get_sentances()
     
         self.assertEqual(len(segments), 2)
     
@@ -110,10 +125,10 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
             'vavvaniovwip.\n',
             'vavvaniovwip?\n'
             ]
-    
         multi_punctuation = "".join(sentances)
-    
-        segments = splitByLineCount(multi_punctuation, 3)
+
+        to_sentances = Text_To_Sentance_Array(multi_punctuation, 3)
+        segments = to_sentances.get_sentances()
     
         self.assertEqual(len(segments), 1)
     
@@ -128,10 +143,10 @@ class SplitByLineCountShouldReturnStringArray(unittest.TestCase):
             'vavvaniovwip!\n',
             'vavvanio "vwip"\n',
             ]
-    
         multi_punctuation = "".join(sentances)
-    
-        segments = splitByLineCount(multi_punctuation, 3)
+
+        to_sentances = Text_To_Sentance_Array(multi_punctuation, 3)
+        segments = to_sentances.get_sentances()
     
         self.assertEqual(len(segments), 2)
     
