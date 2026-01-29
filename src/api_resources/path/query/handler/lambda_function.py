@@ -1,11 +1,11 @@
 import json
 import os
+import re
 
 import boto3
 
-# class Event(TypedDict):
-#     story: str
-    
+from lambda_utils import splitByLineCount
+
 agent_profile ='You will be given a Story Paragraph and must mark phrases that sound like they are created by AI. \
 You are only allowed to respond with a marked version of the Story Paragraph. \
 You must mark phrases by enclosing each phrase in braces. \
@@ -30,7 +30,8 @@ def handler(event, context) -> Respose:
         }
 
     marked = ''
-    paragraphs = event["body"].split('\n')
+
+    paragraphs = splitByLineCount(event["body"], 17)
 
     try:
 
@@ -43,6 +44,8 @@ def handler(event, context) -> Respose:
         for paragraph in paragraphs:
             if len(paragraph)<1:
                 continue
+
+            # is sync so wrap in async and serialise
             inference = agent.retrieve_and_generate(
                 input={
                     'text': paragraph
