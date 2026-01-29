@@ -5,13 +5,13 @@ import asyncio
 
 import boto3
 
-from lambda_utils import Text_To_Sentance_Array
+from query_utils import Text_To_Sentance_Array
 
 session = boto3.Session()
 bedrock = session.client('bedrock')
 agent = session.client('bedrock-agent-runtime')
 
-def handler(event, context) -> Respose:
+def handler(event) -> Respose:
     response = {
             'headers': {
                 'Access-Control-Allow-Origin': '*',

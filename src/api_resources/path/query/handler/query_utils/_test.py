@@ -1,5 +1,5 @@
 import unittest
-from lambda_utils import Text_To_Sentance_Array
+from . import Text_To_Sentance_Array
 
 class TerminatedIdcsShould(unittest.TestCase):
     def test_return_empty_array_for_empty_string(self):
