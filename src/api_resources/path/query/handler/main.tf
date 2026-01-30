@@ -25,8 +25,8 @@ variable "kb_id" {
 
 data "archive_file" "query" {
   type             = "zip"
-  source_file      = "${path.module}/lambda_function.py"
-  output_path      = "${path.module}/my_deployment_package.zip"
+  source_dir = "${path.module}/dist"
+  output_path = "${path.module}/my_deployment_package.zip"
   output_file_mode = "0666"
 }
 

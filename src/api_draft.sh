@@ -1,5 +1,18 @@
 #!/bin/bash
 
+AUTO=''
+
+while getopts “a” OPTION
+do
+  case $OPTION in
+    a)
+      AUTO='--auto-approve'
+      ;;
+  esac
+done
+
+shift $((OPTIND - 1))
+
 AUTH_KEY=$1
 STAGE_UID=$2
 
@@ -17,7 +30,7 @@ terraform -chdir=./api_routes init
 
 case "$STAGE_UID" in
     "prod")
-        ./refreshers/create_dist.sh
+        ./refreshers/create_dists.sh
     ;;
     *)
         terraform -chdir=./dev_fakes init
@@ -46,7 +59,7 @@ cat ./variables/shared/execution_arn.txt >> ./api_resources/terraform.tfvars
 
 cat ./variables/shared/shared.txt >> ./api_resources/terraform.tfvars
 
-terraform -chdir=./api_resources apply
+terraform -chdir=./api_resources apply $AUTO
 
 # CREATE VARIABLE OBJECTS
 case "$STAGE_UID" in
@@ -69,4 +82,4 @@ terraform -chdir=./create_objects apply --auto-approve
 terraform -chdir=./create_objects output > ./api_routes/objects.auto.tfvars
 terraform -chdir=./api_resources output > ./api_routes/resources.auto.tfvars
 
-terraform -chdir=./api_routes apply
+terraform -chdir=./api_routes apply $AUTO
